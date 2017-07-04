@@ -14,9 +14,13 @@ ADD https://github.com/just-containers/s6-overlay/releases/download/$S6_OVERLAY_
 # Pull in the trust keys
 COPY keys/trust.gpg "${TMP_BUILD_DIR}/trust.gpg"
 
+RUN \
+  groupadd --gid 1000 node && \
+  useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+
 # Patch in source for testing sources...
 # Update, install necessary packages, fixup permissions, delete junk
-RUN adduser -D -u 1000 node && \
+RUN \
     apk add --update s6 s6-portable-utils ca-certificates wget tar bash curl && \
     apk add --virtual verify gnupg && \
     mkdir -p "${TMP_BUILD_DIR}" && \
